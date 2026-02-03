@@ -1,0 +1,117 @@
+# Lima VM configuration for OpenClaw sandbox
+# Provides complete isolation from macOS host filesystem
+
+# VM Architecture - auto-detects Apple Silicon vs Intel
+arch: default
+
+# Base image - Ubuntu 24.04 LTS
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
+    arch: "aarch64"
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
+    arch: "x86_64"
+
+# Resource allocation
+cpus: 4
+memory: "8GiB"
+disk: "50GiB"
+
+# CRITICAL: No mounts from host - complete isolation
+# This ensures OpenClaw cannot access any Mac files
+mounts: []
+
+# Network configuration - localhost only for security
+portForwards:
+  - guestPort: 18789
+    hostPort: 18789
+    hostIP: "127.0.0.1"
+  - guestPort: 18790
+    hostPort: 18790
+    hostIP: "127.0.0.1"
+
+# SSH configuration
+ssh:
+  localPort: 0  # Auto-assign port
+  loadDotSSHPubKeys: true
+
+# Containerd for container support if needed
+containerd:
+  system: true
+  user: true
+
+# Provisioning scripts run on first boot
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Update system
+      apt-get update
+      apt-get upgrade -y
+
+      # Install essential packages
+      apt-get install -y \
+        curl \
+        wget \
+        git \
+        build-essential \
+        ca-certificates \
+        gnupg \
+        lsb-release \
+        unzip
+
+      # Install Node.js 22.x (required by OpenClaw)
+      curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+      apt-get install -y nodejs
+
+      # Verify Node.js version
+      echo "Node.js version:"
+      node --version
+      echo "npm version:"
+      npm --version
+
+      # Create dedicated openclaw user
+      useradd -m -s /bin/bash openclaw || true
+
+      # Create workspace directory
+      mkdir -p /home/openclaw/.openclaw/workspace
+      chown -R openclaw:openclaw /home/openclaw/.openclaw
+
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Install OpenClaw globally
+      npm install -g openclaw@latest
+
+      # Verify installation
+      echo "OpenClaw installed successfully"
+      openclaw --version || echo "OpenClaw ready"
+
+# Message displayed after VM creation
+message: |
+  ============================================
+  OpenClaw Sandbox VM is ready!
+  ============================================
+
+  Your Mac's files are completely ISOLATED.
+  OpenClaw runs entirely inside this VM.
+
+  Access the VM:
+    limactl shell openclaw
+
+  Start OpenClaw:
+    limactl shell openclaw -- openclaw
+
+  OpenClaw will be available at:
+    http://localhost:18789
+    http://localhost:18790
+
+  All data is stored INSIDE the VM at:
+    /home/openclaw/.openclaw/workspace
+
+  To destroy and remove all traces:
+    limactl delete openclaw
+  ============================================

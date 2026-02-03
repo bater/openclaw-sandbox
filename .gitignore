@@ -1,0 +1,10 @@
+# OS files
+.DS_Store
+*.swp
+*.swo
+
+# Backup directories
+backup/
+
+# Local overrides
+*.local
