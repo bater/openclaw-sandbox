@@ -8,3 +8,6 @@ backup/
 
 # Local overrides
 *.local
+
+# pem
+*.pem

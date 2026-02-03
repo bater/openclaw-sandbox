@@ -1,0 +1,8 @@
+openclaw.dev {
+    tls ./openclaw.dev.pem ./openclaw.dev-key.pem
+
+    # Preserve localhost as the Host header so OpenClaw accepts the connection
+    reverse_proxy localhost:18789 {
+        header_up Host localhost:18789
+    }
+}

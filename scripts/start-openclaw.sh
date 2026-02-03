@@ -44,5 +44,5 @@ echo "Press Ctrl+C to stop OpenClaw"
 echo "============================================"
 echo ""
 
-# Run OpenClaw in foreground
-limactl shell openclaw -- openclaw
+# Run OpenClaw gateway in foreground
+limactl shell openclaw -- openclaw gateway

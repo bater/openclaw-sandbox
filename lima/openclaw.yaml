@@ -78,12 +78,12 @@ provision:
       mkdir -p /home/openclaw/.openclaw/workspace
       chown -R openclaw:openclaw /home/openclaw/.openclaw
 
-  - mode: user
+  - mode: system
     script: |
       #!/bin/bash
       set -eux -o pipefail
 
-      # Install OpenClaw globally
+      # Install OpenClaw globally (requires sudo/root)
       npm install -g openclaw@latest
 
       # Verify installation

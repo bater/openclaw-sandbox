@@ -1,4 +1,4 @@
-.PHONY: setup create start stop shell status destroy vm-start vm-stop update backup snapshots help
+.PHONY: setup create start stop shell status destroy vm-start vm-stop update backup snapshots proxy proxy-stop all help
 
 # Default target
 help:
@@ -12,7 +12,9 @@ help:
 	@echo ""
 	@echo "Daily Usage:"
 	@echo "  start     - Start OpenClaw in the VM"
+	@echo "  proxy     - Start Caddy proxy (enables https://openclaw.dev)"
 	@echo "  stop      - Stop OpenClaw (keep VM running)"
+	@echo "  proxy-stop - Stop Caddy proxy"
 	@echo "  shell     - Open a shell in the VM"
 	@echo "  status    - Show VM status and ports"
 	@echo ""
@@ -28,6 +30,9 @@ help:
 	@echo ""
 	@echo "Quick Start:"
 	@echo "  make setup && make create && make start"
+	@echo ""
+	@echo "Access via custom domain:"
+	@echo "  make proxy   # then visit https://openclaw.dev"
 
 # One-time setup - install Lima
 setup:
@@ -58,10 +63,20 @@ status:
 	@echo "=== VM Status ==="
 	@limactl list 2>/dev/null || echo "Lima not installed"
 	@echo ""
-	@echo "=== Port Forwards ==="
+	@echo "=== Access URLs ==="
 	@echo "If VM is running, OpenClaw is available at:"
 	@echo "  http://localhost:18789"
-	@echo "  http://localhost:18790"
+	@echo "  https://openclaw.dev (if proxy is running)"
+
+# Start Caddy reverse proxy
+proxy:
+	@chmod +x scripts/*.sh
+	@./scripts/start-proxy.sh
+
+# Stop Caddy reverse proxy
+proxy-stop:
+	@chmod +x scripts/*.sh
+	@./scripts/stop-proxy.sh
 
 # Destroy VM and all data
 destroy:
