@@ -4,7 +4,7 @@ Run [OpenClaw](https://github.com/openclaw/openclaw) in a completely isolated vi
 
 ## Security Model
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                        macOS Host                           │
 │                                                             │
@@ -47,7 +47,7 @@ This setup provides:
 
 ```bash
 # Clone this repository
-git clone <your-repo-url>
+git clone https://github.com/bater/openclaw-sandbox
 cd openclaw-sandbox
 
 # One-time setup: Install Lima
@@ -58,11 +58,13 @@ make create
 
 # Start OpenClaw
 make start
+
+# Start Proxy
+make proxy
 ```
 
 OpenClaw will be available at:
-- http://localhost:18789
-- http://localhost:18790
+- https://openclaw.dev
 
 ## Commands
 
@@ -71,6 +73,7 @@ OpenClaw will be available at:
 | `make setup` | Install Lima on macOS (one-time) |
 | `make create` | Create the sandbox VM |
 | `make start` | Start OpenClaw in the VM |
+| `make proxy` | Start OpenClaw.dev in local custom domain |
 | `make stop` | Stop OpenClaw (keep VM running) |
 | `make shell` | Open a shell in the VM |
 | `make status` | Show VM status |
